@@ -1,13 +1,19 @@
 package edu.coursehub.persistence.student;
 
+import edu.coursehub.persistence.enrollment.Enrollment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "student")
@@ -29,7 +35,11 @@ public class Student {
     @Column(nullable = false)
     private boolean active = true;
 
-    // TODO-STUDENT S03: mapear profile 1:1 y enrollments 1:N.
+    @OneToOne(mappedBy = "student", fetch = FetchType.LAZY)
+    private StudentProfile profile;
+
+    @OneToMany(mappedBy = "student")
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     protected Student() {
     }
@@ -45,4 +55,10 @@ public class Student {
     public String getEmail() { return email; }
     public LocalDate getBirthDate() { return birthDate; }
     public boolean isActive() { return active; }
+    public StudentProfile getProfile() { return profile; }
+    public List<Enrollment> getEnrollments() { return List.copyOf(enrollments); }
+
+    public void deactivate() {
+        this.active = false;
+    }
 }
