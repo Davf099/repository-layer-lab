@@ -1,8 +1,18 @@
 package edu.coursehub.persistence.student;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    // TODO-STUDENT S05: findByEmail, existsByEmail,
-    // findByNameContainingIgnoreCaseAndActiveTrue y paginación.
+    Optional<Student> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    List<Student> findByNameContainingIgnoreCaseAndActiveTrue(String name);
+
+    Page<Student> findByActiveTrue(Pageable pageable);
 }
