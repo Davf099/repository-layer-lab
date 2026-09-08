@@ -33,4 +33,18 @@ public class StudentProfile {
 
     protected StudentProfile() {
     }
+
+    public StudentProfile(Student student, String biography, String githubUrl, String linkedinUrl) {
+        this.student = student;
+        this.biography = biography;
+        this.githubUrl = githubUrl;
+        this.linkedinUrl = linkedinUrl;
+    }
+
+    public Long getId() { return id; }
+    public Student getStudent() { return student; }
+    public String getBiography() { return biography; }
+    public String getGithubUrl() { return githubUrl; }
+    public String getLinkedinUrl() { return linkedinUrl; }
 }
+
