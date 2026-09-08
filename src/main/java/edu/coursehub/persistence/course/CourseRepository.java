@@ -1,7 +1,9 @@
 package edu.coursehub.persistence.course;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,14 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             )
             order by c.code
             """)
+
     List<Course> findCoursesWithoutEnrollments();
-    // TODO-STUDENT S06: consulta nativa PostgreSQL con ILIKE.
+
+    @NativeQuery("""
+            SELECT c.*
+            FROM course c
+            WHERE c.name ILIKE CONCAT('%', :text, '%')
+            ORDER BY c.name
+            """)
+    List<Course> searchByNamePostgres(@Param("text") String text);
 }
