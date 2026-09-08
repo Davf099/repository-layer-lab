@@ -1,9 +1,12 @@
 package edu.coursehub.persistence.enrollment;
 
+import edu.coursehub.persistence.course.Course;
 import edu.coursehub.persistence.course.CourseRepository;
+import edu.coursehub.persistence.student.Student;
 import edu.coursehub.persistence.student.StudentRepository;
-
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EnrollmentService {
@@ -21,9 +24,23 @@ public class EnrollmentService {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
     }
-    // 2. Crear enroll(studentId, courseId).
-    // 3. Marcar la operación como transaccional.
-    // 4. Validar estudiante/curso.
-    // 5. Evitar matrícula duplicada en la capa de negocio.
+    @Transactional
+    public Enrollment enroll(Long studentId, Long courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found: " + studentId));
+
+        if (!student.isActive()) {
+            throw new IllegalStateException("Inactive students cannot enroll");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found: " + courseId));
+
+        if (enrollmentRepository.existsByStudent_IdAndCourse_Id(studentId, courseId)) {
+            throw new DuplicateEnrollmentException(studentId, courseId);
+        }
+
+        return enrollmentRepository.save(Enrollment.enroll(student, course));
+    }
     // 6. Recordar que el UNIQUE de PostgreSQL sigue siendo obligatorio.
 }
