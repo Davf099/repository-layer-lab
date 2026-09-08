@@ -5,7 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "department")
@@ -18,7 +22,8 @@ public class Department {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    // TODO-STUDENT S03: mapear la colección Course con mappedBy.
+    @OneToMany(mappedBy = "department")
+    private List<Course> courses = new ArrayList<>();
 
     protected Department() {
     }
@@ -29,4 +34,5 @@ public class Department {
 
     public Long getId() { return id; }
     public String getName() { return name; }
+    public List<Course> getCourses() { return List.copyOf(courses); }
 }
