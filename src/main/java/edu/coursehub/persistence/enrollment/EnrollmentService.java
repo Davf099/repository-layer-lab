@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 public class EnrollmentService {
 
@@ -24,6 +26,7 @@ public class EnrollmentService {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
     }
+
     @Transactional
     public Enrollment enroll(Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
@@ -42,5 +45,12 @@ public class EnrollmentService {
 
         return enrollmentRepository.save(Enrollment.enroll(student, course));
     }
-    // 6. Recordar que el UNIQUE de PostgreSQL sigue siendo obligatorio.
+
+    @Transactional
+    public Enrollment complete(Long enrollmentId, BigDecimal grade) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Enrollment not found: " + enrollmentId));
+        enrollment.complete(grade);
+        return enrollment;
+    }
 }
