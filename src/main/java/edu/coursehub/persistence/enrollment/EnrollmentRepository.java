@@ -1,6 +1,7 @@
 package edu.coursehub.persistence.enrollment;
 
 import edu.coursehub.persistence.student.Student;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
               and e.finalGrade is not null
             """)
     Double calculateAverageGrade(@Param("courseId") Long courseId);
-    // TODO-STUDENT S11: resolver fetch
-    //  para evitar N+1.
+
+    @EntityGraph(attributePaths = {"student", "course", "course.department"})
+    List<Enrollment> findByCourse_Id(Long courseId);
 }
