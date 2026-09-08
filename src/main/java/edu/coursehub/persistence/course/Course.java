@@ -1,11 +1,19 @@
 package edu.coursehub.persistence.course;
 
+import edu.coursehub.persistence.enrollment.Enrollment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "course")
@@ -24,8 +32,12 @@ public class Course {
     @Column(nullable = false)
     private int credits;
 
-    // TODO-STUDENT S03: mapear Department con @ManyToOne(fetch = LAZY).
-    // TODO-STUDENT S03: mapear enrollments 1:N.
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
+
+    @OneToMany(mappedBy = "course")
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     protected Course() {
     }
@@ -40,4 +52,6 @@ public class Course {
     public String getCode() { return code; }
     public String getName() { return name; }
     public int getCredits() { return credits; }
+    public Department getDepartment() { return department; }
+    public List<Enrollment> getEnrollments() { return List.copyOf(enrollments); }
 }
